@@ -10,5 +10,3 @@ venv/
 # Ignore local logs
 *.log
 
-# WARNING: NEVER push real secrets to GitHub
-k8s/secret.yaml
