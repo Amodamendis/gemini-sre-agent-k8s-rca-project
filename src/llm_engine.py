@@ -13,7 +13,7 @@ class SREAgentBrain:
             raise ValueError("GEMINI_API_KEY environment variable is missing")
         
         self.client = genai.Client()
-        self.model = "gemini-1.5-flash"
+        self.model = "gemini-3.5-flash"
 
         self.system_instruction = """
 You are a Senior Kubernetes Site Reliability Engineer (SRE). 
