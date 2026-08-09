@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre-agent-sa
+  namespace: sre-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sre-agent-cluster-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log", "events"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sre-agent-cluster-role-binding
+subjects:
+- kind: ServiceAccount
+  name: sre-agent-sa
+  namespace: sre-agent
+roleRef:
+  kind: ClusterRole
+  name: sre-agent-cluster-role
+  apiGroup: rbac.authorization.k8s.io

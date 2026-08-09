@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gemini-sre-agent
+  namespace: sre-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gemini-sre-agent
+  template:
+    metadata:
+      labels:
+        app: gemini-sre-agent
+    spec:
+      serviceAccountName: sre-agent-sa
+      containers:
+      - name: gemini-sre-agent
+        image: 619891987476.dkr.ecr.ap-southeast-1.amazonaws.com/gemini-sre-agent:latest
+        imagePullPolicy: Always
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-api-key
+              key: GEMINI_API_KEY
