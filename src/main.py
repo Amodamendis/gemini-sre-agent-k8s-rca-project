@@ -38,7 +38,7 @@ def main():
             cpu_val = 0.0
 
         
-        is_anomalous = "Error" in logs or "Exception" in logs or "Timeout" in logs or cpu_val > 0.5
+        is_anomalous = "Error" in logs or "Exception" in logs or "Timeout" in logs or "Memory" in logs or cpu_val > 0.5
 
         current_time = time.time()
 
