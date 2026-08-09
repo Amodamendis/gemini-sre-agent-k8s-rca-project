@@ -1,0 +1,14 @@
+# Python caches and virtual environments
+__pycache__/
+*.pyc
+venv/
+.env
+
+# VS Code settings
+.vscode/
+
+# Ignore local logs
+*.log
+
+# WARNING: NEVER push real secrets to GitHub
+k8s/secret.yaml
