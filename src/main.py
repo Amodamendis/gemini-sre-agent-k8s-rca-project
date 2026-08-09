@@ -18,6 +18,9 @@ def main():
     target_namespace = "bait-app"
     label_selector = "app=chaos-bait-app"
     job_name = "chaos-bait-app-monitor"
+    
+    # NEW: State flag to prevent API spamming
+    anomaly_already_reported = False 
 
     while True:
         logger.info("Scanning Cluster Telemetry...")
@@ -33,8 +36,11 @@ def main():
         except ValueError:
             cpu_val = 0.0
 
-        # Heuristic to detect if something is wrong before wasting API calls
-        if "Error" in logs or "Exception" in logs or "Timeout" in logs or cpu_val > 0.5 or events != "No warning events.":
+        # Check if cluster is currently failing
+        is_anomalous = "Error" in logs or "Exception" in logs or "Timeout" in logs or cpu_val > 0.5 or events != "No warning events."
+
+        # Only call Gemini if it is broken AND we haven't already reported it
+        if is_anomalous and not anomaly_already_reported:
             logger.warning("Anomaly detected! Engaging Gemini AI for RCA...")
             rca_json_str = brain.analyze_telemetry(logs, events, metrics)
             
@@ -45,8 +51,15 @@ def main():
                 logger.info("=====================================\n")
             except json.JSONDecodeError:
                 logger.error(f"Failed to parse AI output: {rca_json_str}")
-        
-        time.sleep(15) # Wait 15 seconds before scanning again
+            
+            # Set flag to True so we don't spam the API on the next 15s loop
+            anomaly_already_reported = True 
+            
+        elif not is_anomalous:
+            # If the logs clear up and the cluster is healthy, reset the flag
+            anomaly_already_reported = False
+            
+        time.sleep(15)
 
 if __name__ == "__main__":
     main()
